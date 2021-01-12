@@ -44,7 +44,7 @@ export default function Users() {
             });
         
         });
-    },[]);
+    },[edit]);
 
     return (
         <React.Fragment>

@@ -45,7 +45,7 @@ export default function Lecture() {
                });
            
            });
-       },[]);
+       },[edit]);
        return (
            <React.Fragment>
            <Router>

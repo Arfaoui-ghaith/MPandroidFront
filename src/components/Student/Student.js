@@ -44,7 +44,7 @@ export default function Student() {
               });
           
           });
-      },[]);
+      },[edit]);
   
       return (
           <React.Fragment>

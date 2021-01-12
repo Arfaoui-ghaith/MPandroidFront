@@ -43,7 +43,7 @@ export default function Teaching() {
                });
            
            });
-       },[]);
+       },[edit]);
        return (
            <React.Fragment>
            <Router>

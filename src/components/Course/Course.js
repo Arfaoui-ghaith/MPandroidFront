@@ -45,7 +45,7 @@ export default function Course() {
             });
         
         });
-    },[]);
+    },[edit]);
     return (
         <React.Fragment>
         <Router>

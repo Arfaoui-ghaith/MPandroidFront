@@ -43,7 +43,7 @@ export default function Classe() {
             });
         
         });
-    },[]);
+    },[edit]);
     return (
         <React.Fragment>
         <Router>
