@@ -6,7 +6,7 @@ import Header from './../Header/Header';
 
 export default function Course() {
 
-    const [name,setName] = React.useState('');
+    //const [name,setName] = React.useState('');
     
     const [edit,setEdit] = React.useState(false);
 
