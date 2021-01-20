@@ -2,7 +2,6 @@ import React from 'react';
 import {Link, BrowserRouter as Router} from 'react-router-dom';
 
 export default function SideBar() {
-
     
     const active = (e) => {
         console.log(e.target);
@@ -22,7 +21,7 @@ export default function SideBar() {
                             Management
                         </li>
                         <li>
-                            <Link to="/users"><i className="material-icons-outlined">group</i>Users</Link>
+                            <Link to="/"><i className="material-icons-outlined">group</i>Users</Link>
                         </li>
                         <li>
                             <Link to="/classes" onClick={active}><i className="material-icons-outlined">school</i>Classes</Link>

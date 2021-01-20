@@ -214,7 +214,7 @@ $(document).ready(function() {
     
     
       var resetCssClasses = function(activeEl) {
-      var els = document.querySelectorAll('button')
+      var els = document.querySelectorAll('fgf')
       Array.prototype.forEach.call(els, function(el) {
         el.classList.remove('active')
       });

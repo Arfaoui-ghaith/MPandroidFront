@@ -1,10 +1,38 @@
 import React from 'react'
 import {Link, BrowserRouter as Router} from 'react-router-dom';
 import $ from 'jquery';
+import SideBar from './../SideBar/SideBar';
+import Header from './../Header/Header';
+import axios from 'axios';
+
 
 export default function Users() {
     //const [mode,setMode] = React.useState('create');
     const [edit,setEdit] = React.useState(false);
+    const [users, setUsers] = React.useState([]);
+    const [userEdit, setUserEdit] = React.useState({});
+    const userInitialize = { name: "", email: "", cin: ""};
+
+    const getAllUsers = async () => {
+
+        const url = "https://miniprojetandroid.herokuapp.com/api/v1/users/";
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'get',
+                url
+            });
+
+            setUsers(result.data.users);
+            console.log(result.data);
+   
+            
+       }catch(err){
+
+           console.log(err.message);
+       }
+    };
 
     
     function deleletconfig() {
@@ -17,17 +45,25 @@ export default function Users() {
         }
     }
     
-    function openEditDialog(){
+    const openEditDialog = (user) => {
+        setUserEdit(user);
         setEdit(true);
         document.getElementById("mail-compose").click();
     }
 
     function closeDialog(){
+        setUserEdit(userInitialize);
         setEdit(false);
         document.getElementById("dialogF").click();
     }
 
     React.useEffect(() => {
+        console.log(localStorage.getItem("tokenIsetApp"));
+        
+        getAllUsers();
+
+        
+
         $(document).ready(function() {
         
             $('#mail-compose').on('click', function(e) {
@@ -44,11 +80,16 @@ export default function Users() {
             });
         
         });
-    },[edit]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[]);
 
     return (
         <React.Fragment>
         <Router>
+        <div className="connect-container align-content-stretch d-flex flex-wrap">
+        <SideBar/>
+        <div className="page-container">  
+        <Header/>
             <div className="page-content">
                 <div className="page-info">
                     <nav aria-label="breadcrumb">
@@ -62,14 +103,14 @@ export default function Users() {
                     </div>
                 </div>
                 <div className="main-wrapper">
-                <div class="row">
-                            <div class="col-xl">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">All Lectures</h5>
+                <div className="row">
+                            <div className="col-xl">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h5 className="card-title">All Users</h5>
                                        
-                                        <div class="table-responsive">
-                                            <table class="table">
+                                        <div className="table-responsive">
+                                            <table className="table">
                                                 <thead>
                                                     <tr>
                                                         <th scope="col">#</th>
@@ -82,23 +123,28 @@ export default function Users() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    { users.map((user,index) => (
                                                     <tr>
-                                                        <th scope="row">1</th>
-                                                        <td>Cell</td>
-                                                        <td>Cell</td>
-                                                        <td>Cell</td>
-                                                        <td>Cell</td>
                                                         
+                                                        <th scope="row">{index+1}</th>
+                                                        <td>{user.name}</td>
+                                                        <td>{user.email}</td>
+                                                        <td>{user.cin}</td>
+                                                        <td>{user.role}</td>
+                                                        
+                                                
                                                         <td>
-                                                            <Link className="dropdown-toggle" href="#" style={{borderBottomWidth: "0px", borderTopWidth: "0px"}} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <Link className="dropdown-toggle" to="#" style={{borderBottomWidth: "0px", borderTopWidth: "0px"}} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             </Link>
                                                             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                            <Link className="dropdown-item" to="" onClick={openEditDialog}>Edit</Link>
+                                                            <Link className="dropdown-item" to="" onClick={(e) => openEditDialog(user)}>Edit</Link>
                                                             <Link className="dropdown-item" to="" onClick={deleletconfig}>Delete</Link>
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                
+                                                    )
+                                                    )
+                                                    }
                                                 </tbody>
                                             </table>
                                         </div>      
@@ -115,16 +161,14 @@ export default function Users() {
                         <div className="mailbox-compose-body">
                             <form>
                                 <div className="form-group">
-                                    <input type="text" className="form-control"  placeholder="First Name"/>
+                                    <input type="text" className="form-control" value={userEdit.name}  placeholder="Name"/>
+                                </div>
+                                
+                                <div className="form-group">
+                                    <input type="email" className="form-control" value={userEdit.email}  placeholder="Email"/>
                                 </div>
                                 <div className="form-group">
-                                    <input type="email" className="form-control"  placeholder="Last Name"/>
-                                </div>
-                                <div className="form-group">
-                                    <input type="email" className="form-control"  placeholder="Email"/>
-                                </div>
-                                <div className="form-group">
-                                    <input type="text" className="form-control"  placeholder="Cin"/>
+                                    <input type="text" className="form-control" value={userEdit.cin}  placeholder="Cin"/>
                                 </div>
                                 <div className="form-group">
                                     <input type="password" className="form-control"  placeholder="Password"/>
@@ -150,6 +194,8 @@ export default function Users() {
                 </div>
             </div>
             <div id="dialogF" className="mailbox-compose-overlay"></div>
+        </div>
+        </div>
         </Router>
         </React.Fragment>
     )

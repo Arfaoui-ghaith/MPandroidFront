@@ -1,6 +1,8 @@
 import React from 'react'
 import {Link, BrowserRouter as Router} from 'react-router-dom';
 import $ from 'jquery';
+import SideBar from './../SideBar/SideBar';
+import Header from './../Header/Header';
 
 export default function Lecture() {
 
@@ -45,10 +47,15 @@ export default function Lecture() {
                });
            
            });
-       },[edit]);
+       // eslint-disable-next-line react-hooks/exhaustive-deps
+       },[]);
        return (
            <React.Fragment>
            <Router>
+            <div className="connect-container align-content-stretch d-flex flex-wrap">
+            <SideBar/>
+            <div className="page-container">  
+            <Header/>
                <div className="page-content">
                    <div className="page-info">
                        <nav aria-label="breadcrumb">
@@ -164,6 +171,8 @@ export default function Lecture() {
                    </div>
                </div>
                <div id="dialogF" className="mailbox-compose-overlay"></div>
+            </div>
+            </div>
            </Router>
            </React.Fragment>
        );
