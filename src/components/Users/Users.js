@@ -11,7 +11,17 @@ export default function Users() {
     const [edit,setEdit] = React.useState(false);
     const [users, setUsers] = React.useState([]);
     const [userEdit, setUserEdit] = React.useState({});
-    const userInitialize = { name: "", email: "", cin: ""};
+    const [message, setMessage] = React.useState("");
+    
+    const userInitialize = { _id: "", name: "", email: "", cin: "", password: "", passwordConfor: ""};
+
+    const gateway = (edit,user) => {
+        if(edit){
+            console.log("edit",user);
+        }else{
+            addUser(user);
+        }
+    }
 
     const getAllUsers = async () => {
 
@@ -34,14 +44,65 @@ export default function Users() {
        }
     };
 
+    const addUser = async (userEdit) => {
+        if(userEdit.password !== userEdit.passwordConfirm){
+            return setMessage("Passwords are not the same.");
+        }
+        console.log(userEdit);
+        const url = "https://miniprojetandroid.herokuapp.com/api/v1/users/";
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'post',
+                data: userEdit,
+                url
+            });
+
+            console.log(result.data);
+   
+            
+       }catch(err){
+            
+           console.log(err.message);
+       }
+    }
+
+    const deleteUser = async (user) => {
+        console.log(user);
+        const url = `https://miniprojetandroid.herokuapp.com/api/v1/users/`+user._id;
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'delete',
+                url
+            });
+
+            console.log(result.data);
+   
+            
+       }catch(err){
+            
+           console.log(err.message);
+       }
+
+    }
+
+    const updateUser = async (userEdit) => {
+
+    }
+
     
-    function deleletconfig() {
+    function deleletconfig(user) {
         // eslint-disable-next-line no-restricted-globals
-        var del=confirm("Are you sure you want to delete this record?");
+        var del=confirm("Are you sure you want to delete this user with name : "+user.name+"?");
+        
         if (del){
-            alert ("record deleted")
+            deleteUser(user);
+            alert (user.name+" deleted");
         } else {
-            alert("Record Not Deleted")
+            alert(user.name+" not deleted");
         }
     }
     
@@ -124,6 +185,7 @@ export default function Users() {
                                                 </thead>
                                                 <tbody>
                                                     { users.map((user,index) => (
+                                                    <React.Fragment key={index}>
                                                     <tr>
                                                         
                                                         <th scope="row">{index+1}</th>
@@ -137,11 +199,12 @@ export default function Users() {
                                                             <Link className="dropdown-toggle" to="#" style={{borderBottomWidth: "0px", borderTopWidth: "0px"}} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             </Link>
                                                             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                            <Link className="dropdown-item" to="" onClick={(e) => openEditDialog(user)}>Edit</Link>
-                                                            <Link className="dropdown-item" to="" onClick={deleletconfig}>Delete</Link>
+                                                            <span style={{cursor: "pointer"}} className="dropdown-item" to="" onClick={(e) => openEditDialog(user)}>Edit</span>
+                                                            <span style={{cursor: "pointer"}} className="dropdown-item" to="" onClick={(e) => deleletconfig(user)}>Delete</span>
                                                             </div>
                                                         </td>
                                                     </tr>
+                                                    </React.Fragment>
                                                     )
                                                     )
                                                     }
@@ -157,29 +220,30 @@ export default function Users() {
                     <div className="mailbox-compose-content">
                         <div className="mailbox-compose-header">
                             <h5>{ edit ? 'edit' : 'add' } User</h5>
+                            <h6 Style={{color: "red"}}>{message}</h6>
                         </div>
                         <div className="mailbox-compose-body">
                             <form>
                                 <div className="form-group">
-                                    <input type="text" className="form-control" value={userEdit.name}  placeholder="Name"/>
+                                    <input type="text" className="form-control" value={userEdit.name} onChange={(e) => userEdit.name = e.target.value}  placeholder="Name"/>
                                 </div>
                                 
                                 <div className="form-group">
-                                    <input type="email" className="form-control" value={userEdit.email}  placeholder="Email"/>
+                                    <input type="email" className="form-control" value={userEdit.email} onChange={(e) => userEdit.email = e.target.value} placeholder="Email"/>
                                 </div>
                                 <div className="form-group">
-                                    <input type="text" className="form-control" value={userEdit.cin}  placeholder="Cin"/>
+                                    <input type="text" className="form-control" value={userEdit.cin} onChange={(e) => userEdit.cin = e.target.value} placeholder="Cin"/>
                                 </div>
                                 <div className="form-group">
-                                    <input type="password" className="form-control"  placeholder="Password"/>
+                                    <input type="password" className="form-control" onChange={(e) => userEdit.password = e.target.value}  placeholder="Password"/>
                                 </div>
                                 <div className="form-group">
-                                    <input type="passwordConfirm" className="form-control"  placeholder="Confirm Password"/>
+                                    <input type="passwordConfirm" className="form-control" onChange={(e) => userEdit.passwordConfirm = e.target.value}  placeholder="Confirm Password"/>
                                 </div>
                                 
                                 <div className="compose-buttons">
-                                    <button className="btn btn-block btn-success">Save</button>
-                                    <Link to="" className="btn btn-block btn-danger" onClick={closeDialog}>Cancel</Link>
+                                    <span onClick={(e) => gateway(edit,userEdit)} className="btn btn-block btn-success">Save</span>
+                                    <span to="" className="btn btn-block btn-danger" onClick={closeDialog}>Cancel</span>
                                 </div>
                             </form>
                         </div>
