@@ -3,12 +3,34 @@ import {Link, BrowserRouter as Router} from 'react-router-dom';
 import $ from 'jquery';
 import SideBar from './../SideBar/SideBar';
 import Header from './../Header/Header';
+import axios from 'axios';
 
 export default function Lecture() {
 
     const [state,setState] = React.useState('');
- 
+    const [lectures, setLectures] = React.useState([]);
     const [edit,setEdit] = React.useState(false);
+
+    const getAllLectures = async () => {
+
+        const url = "https://miniprojetandroid.herokuapp.com/api/v1/lectures/";
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'get',
+                url
+            });
+
+            setLectures(result.data.lectures);
+            console.log(lectures);
+   
+            
+       }catch(err){
+
+           console.log(err.message);
+       }
+    }
 
         function deleletconfig() {
            // eslint-disable-next-line no-restricted-globals
@@ -31,6 +53,9 @@ export default function Lecture() {
        }
    
        React.useEffect(() => {
+
+        getAllLectures();
+
            $(document).ready(function() {
            
                $('#mail-compose').on('click', function(e) {
@@ -69,17 +94,17 @@ export default function Lecture() {
                        </div>
                    </div>
                    <div className="main-wrapper">
-                        <div class="row">
-                            <div class="col-xl">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">All Lectures</h5>
+                        <div className="row">
+                            <div className="col-xl">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h5 className="card-title">All Lectures</h5>
                                        
-                                        <div class="table-responsive">
-                                            <table class="table">
+                                        <div className="table-responsive">
+                                            <table className="table">
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col">#</th>
+                                                        <th scope="col">ID</th>
                                                         <th scope="col">Teaching</th>
                                                         <th scope="col">Duration</th>
                                                         <th scope="col">Date</th>
@@ -89,13 +114,15 @@ export default function Lecture() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    { lectures.map((lecture,index) => (
+                                                    <React.Fragment key={index}>
                                                     <tr>
-                                                        <th scope="row">1</th>
-                                                        <td>Cell</td>
-                                                        <td>Cell</td>
-                                                        <td>Cell</td>
-                                                        <td>Cell</td>
-                                                        <td>Cell</td>
+                                                        <td>{lecture._id}</td>
+                                                        <td>{lecture.teaching._id}</td>
+                                                        <td>{lecture.duration} mn</td>
+                                                        <td>{lecture.date}</td>
+                                                        <td>{lecture.state}</td>
+                                                        <td>{lecture.room}</td>
                                                         <td>
                                                             <Link className="dropdown-toggle" href="#" style={{borderBottomWidth: "0px", borderTopWidth: "0px"}} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             </Link>
@@ -105,7 +132,9 @@ export default function Lecture() {
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                
+                                                    </React.Fragment>
+                                                    ))
+                                                    }
                                                 </tbody>
                                             </table>
                                         </div>      
@@ -123,7 +152,7 @@ export default function Lecture() {
                                <form>
 
                                     <div className="form-group">
-                                        <select class="custom-select form-control">
+                                        <select className="custom-select form-control">
                                             <option selected>Select teaching</option>
                                             <option value="1">One</option>
                                             <option value="2">Two</option>
@@ -140,7 +169,7 @@ export default function Lecture() {
                                    </div>
 
                                    <div className="form-group">
-                                        <select class="custom-select form-control" onChange={(e) => {setState(e.target.value)}}>
+                                        <select className="custom-select form-control" onChange={(e) => {setState(e.target.value)}}>
                                             <option selected>Select State</option>
                                             <option value="online">Online</option>
                                             <option value="offline">Offline</option>

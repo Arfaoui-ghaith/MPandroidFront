@@ -3,32 +3,156 @@ import {Link, BrowserRouter as Router} from 'react-router-dom';
 import $ from 'jquery';
 import SideBar from './../SideBar/SideBar';
 import Header from './../Header/Header';
+import axios from 'axios';
 
 export default function Classe() {
     const [edit,setEdit] = React.useState(false);
+    const [classeEdit, setClasseEdit] = React.useState({});
+    
+    const [classes, setClasses] = React.useState([]);
+    const [message, setMessage] = React.useState("");
 
-    function deleletconfig() {
+    const gateway = (edit,classe) => {
+        if(edit){
+            console.log("we in the edit now");
+            updateClasse(classe,classeEdit);
+        }else{
+            addClasse(classe);
+        }
+    }
+
+    const getAllClasses = async () => {
+
+        const url = "https://miniprojetandroid.herokuapp.com/api/v1/classes/";
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'get',
+                url
+            });
+
+            setClasses(result.data.classes);
+            console.log(classes);
+   
+            
+       }catch(err){
+
+           console.log(err.message);
+       }
+    }
+
+
+    const addClasse = async (classeEdit) => {
+        if(classeEdit.name === "" || classeEdit.name === undefined){
+            return setMessage("Please provide a unique name.");
+        }
+        console.log(classeEdit);
+        const url = "https://miniprojetandroid.herokuapp.com/api/v1/classes/";
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'post',
+                data: classeEdit,
+                url
+            });
+
+            console.log(result.data);
+            setMessage("");
+            window.location.replace("/classes");
+            
+       }catch(err){
+            setMessage("Please provide a unique name.");
+            console.log(err.message);
+       }
+    }
+
+    const deleteClasse = async (classe) => {
+        console.log(classe);
+        const url = `https://miniprojetandroid.herokuapp.com/api/v1/classes/`+classe._id;
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'delete',
+                url
+            });
+
+            console.log(result.data);
+            window.location.replace("/classes");
+            
+       }catch(err){
+            
+           console.log(err.message);
+       }
+
+    }
+
+    const updateClasse = async (classe,classeEdit) => {
+        setMessage("");
+        let body = {};
+        var test = false;
+        if(!(classeEdit.name === "" || classeEdit.name === undefined)) { body.name = classeEdit.name; test = true;}  
+
+        console.log("body",body);
+        console.log(classe);
+
+        if(test){
+        const url = "https://miniprojetandroid.herokuapp.com/api/v1/classes/"+classe._id;
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'patch',
+                data: body,
+                url
+            });
+
+            console.log(result.data);
+   
+            
+       }catch(err){
+            setMessage("Something went wrong! Please provide unique name.");
+            console.log(err);
+       }
+    }else{
+        setMessage("Please provide a name.");
+    }
+    }
+
+
+    function deleletconfig(classe) {
         // eslint-disable-next-line no-restricted-globals
-        var del=confirm("Are you sure you want to delete this record?");
+        var del=confirm("Are you sure you want to delete this classe "+classe.name+" ?");
         if (del){
-            alert ("record deleted")
+            deleteClasse(classe);
+            alert (classe.name+" deleted.")
         } else {
-            alert("Record Not Deleted")
+            alert(classe.name+" not deleted")
         }
     }
     
-    function openEditDialog(){
+    const openEditDialog = (classe) => {
+        console.log(classe);
+        setClasseEdit(classe)
         setEdit(true);
         document.getElementById("mail-compose").click();
     }
 
     function closeDialog(){
+        setClasseEdit({});
+        setMessage("");
         setEdit(false);
         document.getElementById("dialogF").click();
     }
 
 
     React.useEffect(() => {
+
+        getAllClasses();
+
+
         $(document).ready(function() {
         
             $('#mail-compose').on('click', function(e) {
@@ -67,17 +191,17 @@ export default function Classe() {
                     </div>
                 </div>
                 <div className="main-wrapper">
-                        <div class="row">
-                            <div class="col-xl">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">All Courses</h5>
+                        <div className="row">
+                            <div className="col-xl">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h5 className="card-title">All Courses</h5>
                                        
-                                        <div class="table-responsive">
-                                            <table class="table">
+                                        <div className="table-responsive">
+                                            <table className="table">
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col">#</th>
+                                                        <th scope="col">ID</th>
                                                         <th scope="col">Name</th>
                                                         
                                                         
@@ -85,21 +209,26 @@ export default function Classe() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    {classes.map((classe,index) => (
+                                                    <React.Fragment key={index}>
                                                     <tr>
-                                                        <th scope="row">1</th>
-                                                        <td>Cell</td>
+                                                        <td>{classe._id}</td>
+                                                        <td>{classe.name}</td>
                                                         
                                                         
                                                         <td>
-                                                            <Link className="dropdown-toggle" href="#" style={{borderBottomWidth: "0px", borderTopWidth: "0px"}} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <Link className="dropdown-toggle" to="#" style={{borderBottomWidth: "0px", borderTopWidth: "0px"}} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             </Link>
                                                             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                            <Link className="dropdown-item" to="" onClick={openEditDialog}>Edit</Link>
-                                                            <Link className="dropdown-item" to="" onClick={deleletconfig}>Delete</Link>
+                                                            <span style={{cursor: "pointer"}} className="dropdown-item"  onClick={(e) => openEditDialog(classe)}>Edit</span>
+                                                            <span style={{cursor: "pointer"}} className="dropdown-item"  onClick={(e) => deleletconfig(classe)}>Delete</span>
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                
+                                                    </React.Fragment>
+                                                    )
+                                                    )
+                                                    }
                                                 </tbody>
                                             </table>
                                         </div>      
@@ -112,16 +241,18 @@ export default function Classe() {
                     <div className="mailbox-compose-content">
                         <div className="mailbox-compose-header">
                             <h5>{ edit ? 'edit' : 'add' } Classe</h5>
+                            { edit ? <h6>You can update <strong>{classeEdit.name}</strong> here!</h6> : "" } 
+                            <h6 Style={{color: "red"}}>{message}</h6>
                         </div>
                         <div className="mailbox-compose-body">
                             <form>
                                 <div className="form-group">
-                                    <input type="email" className="form-control" id="compose-email" placeholder="Classe Name"/>
+                                    <input type="text" className="form-control" id="compose-email" onChange={(e) => classeEdit.name = e.target.value} placeholder="Classe Name"/>
                                 </div>
                                 
                                 <div className="compose-buttons">
-                                    <button className="btn btn-block btn-success">Save</button>
-                                    <Link to="" className="btn btn-block btn-danger" onClick={closeDialog}>Cancel</Link>
+                                    <span onClick={(e) => gateway(edit,classeEdit)} className="btn btn-block btn-success">Save</span>
+                                    <span to="" className="btn btn-block btn-danger" onClick={closeDialog}>Cancel</span>
                                 </div>
                             </form>
                         </div>

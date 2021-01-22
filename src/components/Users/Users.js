@@ -12,12 +12,13 @@ export default function Users() {
     const [users, setUsers] = React.useState([]);
     const [userEdit, setUserEdit] = React.useState({});
     const [message, setMessage] = React.useState("");
+    const [userUpdate, setUserUpdate] = React.useState({});
     
-    const userInitialize = { _id: "", name: "", email: "", cin: "", password: "", passwordConfor: ""};
+    const userInitialize = {};
 
     const gateway = (edit,user) => {
         if(edit){
-            console.log("edit",user);
+            updateUser(user,userUpdate);
         }else{
             addUser(user);
         }
@@ -89,8 +90,48 @@ export default function Users() {
 
     }
 
-    const updateUser = async (userEdit) => {
+    const updateUser = async (userEdit,userUpdate) => {
+        setMessage("");
+        let body = {};
+        var test = false;
+        if(!(userUpdate.name === "" || userUpdate.name === undefined)) { body.name = userUpdate.name; test = true;} 
+        if(!(userUpdate.email === "" || userUpdate.email === undefined)) { body.email = userUpdate.email; test = true;} 
+        if(!(userUpdate.cin === "" || userUpdate.cin === undefined)) { body.cin = userUpdate.cin; test = true;} 
+        if(!(userUpdate.password === "" || userUpdate.password === undefined)) {  
+        if(!(userUpdate.passwordConfirm === "" || userUpdate.passwordConfirm === undefined)) { 
+            if(userUpdate.password !== userUpdate.passwordConfirm){
+                setMessage("Please confirm your password.");
+                return;
+            }
+            body.password = userUpdate.password;
+            
+         } test = true;}
+        if(userUpdate.role === "teacher" || userUpdate.role === "admin") { body.role = userUpdate.role; test = true;}  
 
+        console.log("body",body);
+        console.log(userEdit);
+
+        if(test){
+        const url = "https://miniprojetandroid.herokuapp.com/api/v1/users/"+userEdit._id;
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'patch',
+                data: body,
+                url
+            });
+
+            console.log(result.data);
+   
+            
+       }catch(err){
+            setMessage("Something went wrong! cin already used or invalid fields to update.");
+           console.log(err);
+       }
+    }else{
+        setMessage("All Fields Empty !!");
+    }
     }
 
     
@@ -113,6 +154,8 @@ export default function Users() {
     }
 
     function closeDialog(){
+        setMessage("");
+        setUserUpdate({});
         setUserEdit(userInitialize);
         setEdit(false);
         document.getElementById("dialogF").click();
@@ -174,7 +217,7 @@ export default function Users() {
                                             <table className="table">
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col">#</th>
+                                                        <th scope="col">ID</th>
                                                         <th scope="col">Full Name</th>
                                                         <th scope="col">Email</th>
                                                         <th scope="col">CIN</th>
@@ -188,7 +231,7 @@ export default function Users() {
                                                     <React.Fragment key={index}>
                                                     <tr>
                                                         
-                                                        <th scope="row">{index+1}</th>
+                                                        <td>{user._id}</td>
                                                         <td>{user.name}</td>
                                                         <td>{user.email}</td>
                                                         <td>{user.cin}</td>
@@ -199,8 +242,8 @@ export default function Users() {
                                                             <Link className="dropdown-toggle" to="#" style={{borderBottomWidth: "0px", borderTopWidth: "0px"}} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             </Link>
                                                             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                            <span style={{cursor: "pointer"}} className="dropdown-item" to="" onClick={(e) => openEditDialog(user)}>Edit</span>
-                                                            <span style={{cursor: "pointer"}} className="dropdown-item" to="" onClick={(e) => deleletconfig(user)}>Delete</span>
+                                                            <span style={{cursor: "pointer"}} className="dropdown-item" onClick={(e) => openEditDialog(user)}>Edit</span>
+                                                            <span style={{cursor: "pointer"}} className="dropdown-item" onClick={(e) => deleletconfig(user)}>Delete</span>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -220,26 +263,36 @@ export default function Users() {
                     <div className="mailbox-compose-content">
                         <div className="mailbox-compose-header">
                             <h5>{ edit ? 'edit' : 'add' } User</h5>
+                            { edit ? <h6>You can update <strong>{userEdit.name}</strong> of the cin <strong>{userEdit.cin}</strong> here!</h6> : "" } 
                             <h6 Style={{color: "red"}}>{message}</h6>
+
                         </div>
                         <div className="mailbox-compose-body">
                             <form>
                                 <div className="form-group">
-                                    <input type="text" className="form-control" value={userEdit.name} onChange={(e) => userEdit.name = e.target.value}  placeholder="Name"/>
+                                    <input type="text" className="form-control"  onChange={(e) => userUpdate.name = e.target.value}  placeholder="Name"/>
                                 </div>
                                 
                                 <div className="form-group">
-                                    <input type="email" className="form-control" value={userEdit.email} onChange={(e) => userEdit.email = e.target.value} placeholder="Email"/>
+                                    <input type="email" className="form-control"  onChange={(e) => userUpdate.email = e.target.value} placeholder="Email"/>
                                 </div>
                                 <div className="form-group">
-                                    <input type="text" className="form-control" value={userEdit.cin} onChange={(e) => userEdit.cin = e.target.value} placeholder="Cin"/>
+                                    <input type="text" className="form-control"  onChange={(e) => userUpdate.cin = e.target.value} placeholder="Cin"/>
                                 </div>
                                 <div className="form-group">
-                                    <input type="password" className="form-control" onChange={(e) => userEdit.password = e.target.value}  placeholder="Password"/>
+                                    <input type="password" className="form-control" onChange={(e) => userUpdate.password = e.target.value}  placeholder="Password"/>
                                 </div>
                                 <div className="form-group">
-                                    <input type="passwordConfirm" className="form-control" onChange={(e) => userEdit.passwordConfirm = e.target.value}  placeholder="Confirm Password"/>
+                                    <input type="password" className="form-control" onChange={(e) => userUpdate.passwordConfirm = e.target.value}  placeholder="Confirm Password"/>
                                 </div>
+                                <div className="form-group">
+                                        <select class="custom-select form-control" onChange={(e) => userUpdate.role = e.target.value}>
+                                            <option selected>Select Role</option>
+                                            <option value="teacher" selected>Teacher</option>
+                                            <option value="admin">Admin</option>
+                                            
+                                        </select>
+                                    </div>
                                 
                                 <div className="compose-buttons">
                                     <span onClick={(e) => gateway(edit,userEdit)} className="btn btn-block btn-success">Save</span>
