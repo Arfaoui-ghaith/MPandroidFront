@@ -173,7 +173,7 @@ export default function Classe() {
     },[]);
     return (
         <React.Fragment>
-        <Router>
+        
         <div className="connect-container align-content-stretch d-flex flex-wrap">
         <SideBar/>
         <div className="page-container">  
@@ -213,7 +213,7 @@ export default function Classe() {
                                                     <React.Fragment key={index}>
                                                     <tr>
                                                         <td>{classe._id}</td>
-                                                        <td>{classe.name}</td>
+                                                        <td><Link to="/students" alt={classe.name} onClick={(e) => localStorage.setItem('classeName', e.target.attributes[0].value)}>{classe.name}</Link></td>
                                                         
                                                         
                                                         <td>
@@ -269,7 +269,7 @@ export default function Classe() {
             <div id="dialogF" className="mailbox-compose-overlay"></div>
         </div>
       </div>
-        </Router>
+        
         </React.Fragment>
     )
 }

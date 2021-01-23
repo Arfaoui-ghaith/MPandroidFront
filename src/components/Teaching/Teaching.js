@@ -272,7 +272,7 @@ export default function Teaching() {
                                                             <Link className="dropdown-toggle" href="#" style={{borderBottomWidth: "0px", borderTopWidth: "0px"}} role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             </Link>
                                                             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                            <span style={{cursor: "pointer"}} className="dropdown-item"  onClick={(e) => openEditDialog(teaching)}>Edit</span>
+                                                            
                                                             <span style={{cursor: "pointer"}} className="dropdown-item"  onClick={(e) => deleletconfig(teaching)}>Delete</span>
                                                             </div>
                                                         </td>

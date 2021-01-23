@@ -30,6 +30,7 @@ export default function Student() {
       }
   
       React.useEffect(() => {
+          console.log("classe",localStorage.getItem("classeName"));
           $(document).ready(function() {
           
               $('#mail-compose').on('click', function(e) {
