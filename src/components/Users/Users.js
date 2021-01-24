@@ -162,6 +162,9 @@ export default function Users() {
     }
 
     React.useEffect(() => {
+        if(localStorage.getItem("tokenIsetApp") === null  || localStorage.getItem("tokenIsetApp") === undefined){
+            return window.location = "/login";
+        }
         console.log(localStorage.getItem("tokenIsetApp"));
         
         getAllUsers();

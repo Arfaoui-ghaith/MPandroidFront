@@ -151,11 +151,32 @@ export default function Lecture() {
     }
     }
 
+    const deleteLecture = async (lecture) => {
+        console.log(lecture);
+        const url = `https://miniprojetandroid.herokuapp.com/api/v1/lectures/`+lecture._id;
+
+        try{
+            const result = await axios({
+                headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
+                method: 'delete',
+                url
+            });
+
+            console.log(result.data);
+            window.location.replace("/lectures");
+            
+       }catch(err){
+            
+           console.log(err.message);
+       }
+
+    }
+
         function deleletconfig(lecture) {
         // eslint-disable-next-line no-restricted-globals
         var del=confirm("Are you sure you want to delete this lecture of ID : "+lecture._id+" ?");
         if (del){
-            //deleteClasse(classe);
+            deleteLecture(lecture);
             alert (lecture._id+" deleted.")
         } else {
             alert(lecture._id+" not deleted")

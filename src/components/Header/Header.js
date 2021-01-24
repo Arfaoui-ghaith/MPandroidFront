@@ -20,7 +20,7 @@ export default function Header() {
                             <span>Sarra GB</span><i className="material-icons dropdown-icon">keyboard_arrow_down</i>
                         </Link>
                         <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <Link className="dropdown-item" to="#">Log out</Link>
+                        <span style={{cursor: "pointer"}} onClick={(e) => { localStorage.removeItem("tokenIsetApp"); window.location.replace("/login") }}  className="dropdown-item" to="#">Log out</span>
                         </div>
                     </li>
                     

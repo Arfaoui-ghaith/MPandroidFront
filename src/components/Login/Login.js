@@ -27,7 +27,7 @@ export default function Login() {
             });
 
             localStorage.setItem("tokenIsetApp",result.data.token);
-   
+            window.location.replace("/");
             
        }catch(err){
         setLoading("Connect");

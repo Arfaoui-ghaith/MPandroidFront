@@ -213,7 +213,7 @@ export default function Classe() {
                                                     <React.Fragment key={index}>
                                                     <tr>
                                                         <td>{classe._id}</td>
-                                                        <td><Link to="/students" alt={classe.name} onClick={(e) => localStorage.setItem('classeName', e.target.attributes[0].value)}>{classe.name}</Link></td>
+                                                        <td><Link to="/students" alt={classe.name} name={classe._id} onClick={(e) => {localStorage.setItem('classeName', e.target.attributes[0].value);  localStorage.setItem('classeID', e.target.attributes[1].value);}}>{classe.name}</Link></td>
                                                         
                                                         
                                                         <td>
