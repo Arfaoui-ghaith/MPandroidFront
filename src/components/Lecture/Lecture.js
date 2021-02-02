@@ -88,7 +88,7 @@ export default function Lecture() {
         }
         
         if(lecture.state === "offline"){
-            if(lecture.room === "" || lecture.romm === undefined){
+            if(lecture.room === "" || lecture.room === undefined){
                 return setMessage("Please provide a room.");
             }
         }
@@ -133,7 +133,7 @@ export default function Lecture() {
         try{
             const result = await axios({
                 headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
-                method: 'patch',
+                method: 'post',
                 data: body,
                 url
             });
@@ -143,11 +143,11 @@ export default function Lecture() {
    
             
        }catch(err){
-            setMessage("Something went wrong! Please provide unique name.");
+            setMessage("Something went wrong! Please check your fields.");
             console.log(err);
        }
     }else{
-        setMessage("Please provide a name.");
+        setMessage("Please check your fields.");
     }
     }
 

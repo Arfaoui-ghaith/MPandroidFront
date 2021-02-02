@@ -125,7 +125,7 @@ export default function Student() {
         try{
             const result = await axios({
                 headers : {'Authorization': `Bearer ${localStorage.getItem('tokenIsetApp')}`},
-                method: 'patch',
+                method: 'post',
                 data: body,
                 url
             });
